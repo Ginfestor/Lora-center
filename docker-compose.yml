@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  lora:
+    build: .
+    ports:
+      - "8000:8000"
+      - "7860:7860"
+    volumes:
+      - ./data:/app/data
+      - ./adapters:/app/adapters
+      - ./models:/app/models
+      - ./cache:/app/.cache
+    environment:
+      - TRANSFORMERS_CACHE=/app/.cache
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
