@@ -12,26 +12,6 @@
 
 ## Установка
 
-### Локальная установка
-
-1. Клонируйте репозиторий:
-```bash
-git clone https://github.com/Ginfestor/Lora-center.git
-cd Lora-center
-```
-
-2. Установите зависимости:
-```bash
-pip install -r requirements.txt
-```
-
-3. Запустите приложение:
-```bash
-python main.py
-```
-
-### Установка через Docker
-
 1. Клонируйте репозиторий:
 ```bash
 git clone https://github.com/Ginfestor/Lora-center.git
@@ -61,8 +41,7 @@ docker-compose up --build
 
 ## Требования
 
-- Python 3.8+ (для локальной установки)
-- Docker и Docker Compose (для установки через Docker)
+- Docker и Docker Compose
 - CUDA-совместимая видеокарта (рекомендуется)
 - Минимум 16GB RAM
 - 20GB свободного места на диске
