@@ -11,6 +11,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from huggingface_hub import HfApi, login, HfFolder
 from dotenv import load_dotenv
 from peft import PeftModel
+import torch
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -267,13 +268,16 @@ def download_model(model_name, model_id, hf_token):
         
         # Загрузка модели
         try:
-            model = AutoModelForCausalLM.from_pretrained(
-                model_id,
-                torch_dtype="auto",
+            base_model = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                torch_dtype=torch.float16,
                 device_map="auto",
-                use_auth_token=hf_token
+                local_files_only=True,
+                max_memory={0: "4GB"},  # Уменьшаем до 4GB для GPU с 7.66GB памяти
+                low_cpu_mem_usage=True,  # Оптимизация использования CPU памяти
+                offload_folder="offload"  # Папка для выгрузки на CPU
             )
-            model.save_pretrained(model_path)
+            base_model.save_pretrained(model_path)
             logger.info(f"Модель {model_name} успешно загружена")
             
             # Создаем файл с метаданными модели
@@ -414,9 +418,12 @@ def chatbot(message, history, model_name, lora_selector="Нет"):
             # Сначала загружаем базовую модель
             base_model = AutoModelForCausalLM.from_pretrained(
                 model_path,
-                torch_dtype="auto",
+                torch_dtype=torch.float16,
                 device_map="auto",
-                local_files_only=True
+                local_files_only=True,
+                max_memory={0: "4GB"},  # Уменьшаем до 4GB для GPU с 7.66GB памяти
+                low_cpu_mem_usage=True,  # Оптимизация использования CPU памяти
+                offload_folder="offload"  # Папка для выгрузки на CPU
             )
             
             # Если используется LoRA, загружаем адаптер

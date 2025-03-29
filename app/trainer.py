@@ -57,7 +57,10 @@ def train_lora(model_name, r=8, alpha=32, dropout=0.05):
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
             torch_dtype=torch.float16,
-            device_map="auto"
+            device_map="auto",
+            max_memory={0: "4GB"},  # Уменьшаем до 4GB для GPU с 7.66GB памяти
+            low_cpu_mem_usage=True,  # Оптимизация использования CPU памяти
+            offload_folder="offload"  # Папка для выгрузки на CPU
         )
         tokenizer = AutoTokenizer.from_pretrained(model_path)
         
